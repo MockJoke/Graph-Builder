@@ -2,6 +2,19 @@ using UnityEngine;
 
 public class GraphBuilder : MonoBehaviour
 {
+    private enum Function
+    {
+        none = 0,
+        x = 1,
+        xx = 2,
+        xxx = 3,
+        sinx = 4,
+        cosx = 5,
+        tanx = 6
+    }
+    
+    private Function chosenFunction = Function.none;
+    
     [SerializeField] private Transform pointPrefab;
 
     [SerializeField, Range(10, 100)] private int resolution = 10;
@@ -24,7 +37,7 @@ public class GraphBuilder : MonoBehaviour
             point.SetParent(transform, false);
         }
     }
-
+    
     void Update()
     {
         float time = Time.time;
@@ -33,8 +46,38 @@ public class GraphBuilder : MonoBehaviour
         {
             Transform point = points[i];
             Vector3 position = point.localPosition;
-            position.y = Mathf.Sin(Mathf.PI * (position.x + time));
+
+            switch (chosenFunction)
+            {
+                case Function.x:
+                    position.y = position.x;
+                    break;
+                case Function.xx:
+                    position.y = position.x * position.x;
+                    break;
+                case Function.xxx:
+                    position.y = position.x * position.x * position.x;
+                    break;
+                case Function.sinx:
+                    position.y = Mathf.Sin(Mathf.PI * (position.x + time));
+                    break;
+                case Function.cosx:
+                    position.y = Mathf.Cos(Mathf.PI * (position.x + time));
+                    break;
+                case Function.tanx:
+                    position.y = Mathf.Tan(position.x);
+                    break;
+                default:
+                    position.y = 0;
+                    break;
+            }
+            
             point.localPosition = position;
         }
+    }
+
+    public void SelectGraphFunction(int funcNo)
+    {
+        chosenFunction = (Function)funcNo;
     }
 }
